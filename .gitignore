@@ -1,0 +1,31 @@
+# Node dependencies
+node_modules/
+
+# Private keys - NEVER commit these
+*.key
+*.key.pem
+environment/keys/
+
+# Environment and configuration files with secrets
+.env
+.env.local
+.env.*.local
+
+# DuckDB database files and write-ahead logs
+releases.duckdb
+*.duckdb
+*.duckdb.wal
+
+# Generated report output written by the publisher at runtime.
+reports/publications.actual.txt
+/publications.actual.txt
+
+# Distribution gateway runtime ledger (keep the .gitkeep placeholder tracked)
+distribution-gateway/data/*.json
+distribution-gateway/data/*.db
+!distribution-gateway/data/.gitkeep
+
+# Logs and OS noise
+*.log
+npm-debug.log*
+.DS_Store
