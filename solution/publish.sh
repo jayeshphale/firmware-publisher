@@ -1,8 +1,14 @@
-#!/bin/bash
-# Placeholder solution entrypoint — candidate/scaffold stub.
-# Exits 0 so the harness proceeds to tests/test.sh; the smoke check only verifies
-# that the harness executes end-to-end, not that the reward is >= 1.0.
-#
-# The reference publisher (publisher/release-publisher.mjs) is authored and graded
-# separately by a human; no solution is included in this folder.
-exit 0
+#!/bin/sh
+set -eu
+
+solution_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+app_root=${APP_ROOT:-$(CDPATH= cd -- "$solution_dir/.." && pwd)}
+if [ ! -f "$app_root/package.json" ] && [ -f "$app_root/environment/package.json" ]; then
+	app_root="$app_root/environment"
+fi
+cd "$app_root"
+publisher_path="$solution_dir/release-publisher.mjs"
+if [ -f "$app_root/publisher/release-publisher.mjs" ]; then
+	publisher_path="$app_root/publisher/release-publisher.mjs"
+fi
+exec node "$publisher_path" --report

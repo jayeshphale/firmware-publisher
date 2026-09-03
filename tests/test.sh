@@ -7,9 +7,17 @@ fi
 
 mkdir -p /logs/verifier
 
-# pytest + pytest-json-ctrf are pre-installed in the verifier image (shared mode).
-# allow_internet=false, so no wheels are resolved at run time — invoke pytest directly.
-python -m pytest --ctrf /logs/verifier/ctrf.json /tests/test_outputs.py -rA
+node /app/distribution-gateway/server.js >/tmp/gateway.log 2>&1 &
+gateway_pid=$!
+trap 'kill "$gateway_pid" 2>/dev/null || true' EXIT
+
+for attempt in $(seq 1 30); do
+  if node -e "fetch('http://127.0.0.1:7070/healthz').then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))"; then break; fi
+  sleep 1
+done
+
+# pytest + pytest-json-ctrf are pre-installed in the verifier image.
+python3 -m pytest --ctrf /logs/verifier/ctrf.json /tests/test_outputs.py -rA
 code=$?
 
 # Surface pytest's raw exit code so the negative-control check can tell "tests ran
